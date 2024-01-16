@@ -6,5 +6,5 @@ type Picture struct {
 	Desc     string
 	Source   string
 	Tags     []Tag
-	isHidden bool
+	IsHidden bool
 }

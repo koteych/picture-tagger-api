@@ -5,5 +5,5 @@ type Tag struct {
 	Name     string
 	Desc     string
 	Alias    string
-	isHidden bool
+	IsHidden bool
 }
