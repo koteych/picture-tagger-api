@@ -5,6 +5,6 @@ type Picture struct {
 	Title    string
 	Desc     string
 	Source   string
-	Tags     []string
+	Tags     []Tag
 	isHidden bool
 }
