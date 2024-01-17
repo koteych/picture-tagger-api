@@ -11,6 +11,7 @@ type SQLTagRepository struct {
 
 type TagRepository interface {
 	CreateTag(tag *model.Tag) error
+	DeleteTag(id int) error
 }
 
 func NewSQLTagRepository(db *sql.DB) *SQLTagRepository {
@@ -25,4 +26,11 @@ func (r *SQLTagRepository) CreateTag(tag *model.Tag) (*model.Tag, error) {
 		return nil, err
 	}
 	return tag, nil
+}
+
+func (r *SQLTagRepository) DeleteTag(id int) error {
+	_, err := r.db.Exec(
+		"DELETE FROM tags WHERE id = ?",
+		id)
+	return err
 }
