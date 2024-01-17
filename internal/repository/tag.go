@@ -10,7 +10,7 @@ type SQLTagRepository struct {
 }
 
 type TagRepository interface {
-	CreateTag(tag *model.Tag) error
+	CreateTag(tag *model.Tag) (*model.Tag, error)
 	DeleteTag(id int) error
 }
 
@@ -33,4 +33,20 @@ func (r *SQLTagRepository) DeleteTag(id int) error {
 		"DELETE FROM tags WHERE id = ?",
 		id)
 	return err
+}
+
+func (r *SQLTagRepository) GetByName(name string) (*model.Tag, error) {
+	query := "SELECT id, tag_name FROM tags WHERE tag_name = ?"
+	row := r.db.QueryRow(query, name)
+
+	var tag model.Tag
+	err := row.Scan(&tag.ID, &tag.Name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &tag, nil
 }
