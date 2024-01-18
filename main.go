@@ -33,7 +33,13 @@ func main() {
 		PictureService: *pictureService,
 	}
 
+	tagHandler := &handler.TagHandler{
+		TagService: *tagService,
+	}
+
 	r.POST("/api/pictures/:picture_id/assign-tag/:tag_id", pictureHandler.AssignTagById)
+
+	r.GET("/api/tags", tagHandler.GetAll)
 
 	r.Run()
 }
