@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 
-	"picture_tagger_api/internal/model"
+	"picture_tagger_api/internal/handler"
 	"picture_tagger_api/internal/repository"
 	"picture_tagger_api/internal/service"
 	"picture_tagger_api/pkg/utils"
@@ -22,25 +20,23 @@ func main() {
 	}
 	defer db.Close()
 
-	fmt.Sprintln(db)
-
 	pictureRepo := repository.NewSQLPictureRepository(db)
-	pictureService := service.NewPictureService(pictureRepo)
-
 	tagRepo := repository.NewSQLTagRepository(db)
 
-	err = utils.PopulateDB(db)
+	pictureService := service.NewPictureService(pictureRepo, tagRepo)
 
-	someTag := model.Tag{ID: 100, Name: "New tag", Alias: "new_tag_alias", Desc: "", IsHidden: false}
-	_, err = tagRepo.CreateTag(&someTag)
+	//somePicture := model.Picture{ID: 100, Title: "some picture"}
 
-	fmt.Println(err)
-	fmt.Println(pictureService)
+	//ictureRepo.CreatePicture(&somePicture)
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	//someTag := model.Tag{ID: 100, Name: "New tag", Alias: "new_tag_alias", Desc: "", IsHidden: false}
+	//_, err = tagRepo.CreateTag(&someTag)
+
+	pictureHandler := &handler.PictureHandler{
+		PictureService: *pictureService,
+	}
+
+	r.POST("/api/pictures/:picture_id/assign-tag/:tag_id", pictureHandler.AssignTagById)
+
 	r.Run()
 }
