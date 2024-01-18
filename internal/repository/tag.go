@@ -12,6 +12,7 @@ type SQLTagRepository struct {
 type TagRepository interface {
 	CreateTag(tag *model.Tag) (*model.Tag, error)
 	DeleteTag(id int) error
+	FindByName(name string) ([]model.Tag, error)
 }
 
 func NewSQLTagRepository(db *sql.DB) *SQLTagRepository {
@@ -49,4 +50,33 @@ func (r *SQLTagRepository) GetByName(name string) (*model.Tag, error) {
 	}
 
 	return &tag, nil
+}
+
+func (r *SQLTagRepository) FindByName(name string) ([]model.Tag, error) {
+	query := "SELECT id, tag_name FROM tags WHERE tag_name LIKE ?"
+	searchName := "%" + name + "%"
+	rows, err := r.db.Query(query, searchName)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tags []model.Tag
+
+	for rows.Next() {
+		var tag model.Tag
+		err := rows.Scan(&tag.ID, &tag.Name)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tags, nil
 }

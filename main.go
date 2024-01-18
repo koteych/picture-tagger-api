@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"picture_tagger_api/internal/handler"
@@ -24,13 +25,9 @@ func main() {
 	tagRepo := repository.NewSQLTagRepository(db)
 
 	pictureService := service.NewPictureService(pictureRepo, tagRepo)
+	tagService := service.NewTagService(pictureRepo, tagRepo)
 
-	//somePicture := model.Picture{ID: 100, Title: "some picture"}
-
-	//ictureRepo.CreatePicture(&somePicture)
-
-	//someTag := model.Tag{ID: 100, Name: "New tag", Alias: "new_tag_alias", Desc: "", IsHidden: false}
-	//_, err = tagRepo.CreateTag(&someTag)
+	fmt.Println(tagService.FindByName("new"))
 
 	pictureHandler := &handler.PictureHandler{
 		PictureService: *pictureService,
